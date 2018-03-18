@@ -18,17 +18,34 @@ package com.example.android.sunshine.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.format.DateUtils;
+import android.util.Log;
 
+import com.example.android.sunshine.MainActivity;
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.NotificationUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 import java.net.URL;
 
 public class SunshineSyncTask {
+
+    private static final int INDEX_WEATHER_ID = 0;
+    private static final int INDEX_MAX_TEMP = 1;
+    private static final int INDEX_MIN_TEMP = 2;
+    private static final String LOG_TAG = SunshineSyncTask.class.getSimpleName();
+    private static final String WEATHER_DATA = "WEATHER_DATA";
+    private static final String WEATHER_DATA_ID = "WEATHER_DATA_ID";
+    private static final String WEATHER_DATA_URI = "WEATHER_DATA_URI";
 
     /**
      * Performs the network request for updated weather, parses the JSON from that request, and
@@ -104,6 +121,8 @@ public class SunshineSyncTask {
                     NotificationUtils.notifyUserOfNewWeather(context);
                 }
 
+                notifyWatch(context);
+
             /* If the code reaches this point, we have successfully performed our sync */
 
             }
@@ -111,6 +130,41 @@ public class SunshineSyncTask {
         } catch (Exception e) {
             /* Server probably invalid */
             e.printStackTrace();
+        }
+    }
+
+    private static void notifyWatch(Context context) {
+        String locationQuery = SunshinePreferences.getPreferredWeatherLocation(context);
+        Uri weatherUri = WeatherContract.WeatherEntry
+                .buildWeatherLocationWithDate(locationQuery, System.currentTimeMillis());
+        Cursor cursor = context.getContentResolver()
+                .query(weatherUri, new String[] {
+                WeatherContract.WeatherEntry.COLUMN_WEATHER_ID,
+                WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
+                WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
+        }, null, null, null);
+        if (cursor.moveToFirst()) {
+            int weatherId = cursor.getInt(INDEX_WEATHER_ID);
+            String temperatureData = String.valueOf(cursor.getDouble(INDEX_MAX_TEMP) + " " + cursor.getDouble(INDEX_MIN_TEMP));
+
+            PutDataMapRequest dataMap = PutDataMapRequest.create(WEATHER_DATA_URI);
+            dataMap.getDataMap().putString(WEATHER_DATA, temperatureData);
+            dataMap.getDataMap().putLong(WEATHER_DATA_ID, weatherId);
+            PutDataRequest request = dataMap.asPutDataRequest();
+
+            Wearable.DataApi.putDataItem(MainActivity.mGoogleApiClient, request)
+                    .setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+                        @Override
+                        public void onResult(DataApi.DataItemResult result) {
+                            if (!result.getStatus().isSuccess()) {
+                                Log.d(LOG_TAG, "Cannot send weather information, status code: "
+                                        + result.getStatus().getStatusCode());
+                            } else {
+                                Log.d(LOG_TAG, "Weather information was sent successfully "
+                                        + result.getDataItem().getUri());
+                            }
+                        }
+                    });
         }
     }
 }

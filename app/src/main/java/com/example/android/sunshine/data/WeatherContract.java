@@ -20,6 +20,8 @@ import android.provider.BaseColumns;
 
 import com.example.android.sunshine.utilities.SunshineDateUtils;
 
+import static com.example.android.sunshine.utilities.SunshineDateUtils.normalizeDate;
+
 /**
  * Defines table and column names for the weather database. This class is not necessary, but keeps
  * the code organized.
@@ -131,8 +133,13 @@ public class WeatherContract {
          * @return The selection part of the weather query for today onwards
          */
         public static String getSqlSelectForTodayOnwards() {
-            long normalizedUtcNow = SunshineDateUtils.normalizeDate(System.currentTimeMillis());
+            long normalizedUtcNow = normalizeDate(System.currentTimeMillis());
             return WeatherContract.WeatherEntry.COLUMN_DATE + " >= " + normalizedUtcNow;
+        }
+
+        public static Uri buildWeatherLocationWithDate(String locationSetting, long date) {
+            return CONTENT_URI.buildUpon().appendPath(locationSetting)
+                    .appendPath(Long.toString(normalizeDate(date))).build();
         }
     }
 }
