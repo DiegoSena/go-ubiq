@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "888121978949",
+    "firebase_url": "https://go-ubiq.firebaseio.com",
+    "project_id": "go-ubiq",
+    "storage_bucket": "go-ubiq.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:888121978949:android:3caeb874bdb82d44",
+        "android_client_info": {
+          "package_name": "com.example.android.sunshine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "888121978949-vchsdj7e5f77q42fho4gr50oh0c9ub34.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgXxaGizN93qYSaBGdoZFrfhsrSOjqnBU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

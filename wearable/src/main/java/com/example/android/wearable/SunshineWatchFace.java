@@ -201,19 +201,12 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             canvas.drawText(date, xPosDate, yPosDate, mDatePaint);
 
             if(!isInAmbientMode()){
-                //Draw rectangle
-                canvas.drawRect(xPosTime,
-                        yPosDate + padding,
-                        (canvas.getWidth() / 2 + mTimeOfTheDayPaint.measureText(time, 0, time.length()) / 2),
-                        mTimeOfTheDayPaint.measureText(time, 0, time.length()),
-                        mRectPaint);
-
-                // Weather Icon
+                //Icon
                 float yPosIcon = yPosDate + padding;
                 float xPosIcon = canvas.getWidth() / 2 - mBitmap.getWidth();
                 canvas.drawBitmap(mBitmap, xPosIcon, yPosIcon, mIconPaint);
 
-                // Temperature
+                // Temperatures
                 float yPosWeather = yPosDate + mTemperaturePaint.getTextSize() + mBitmap.getHeight() / 2;
                 float xPosWeather = canvas.getWidth() / 2;
                 canvas.drawText(mWeather != null ? mWeather : "", xPosWeather, yPosWeather, mTemperaturePaint);

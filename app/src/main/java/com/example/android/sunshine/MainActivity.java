@@ -36,7 +36,7 @@ import android.widget.ProgressBar;
 
 import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
-import com.example.android.sunshine.sync.SunshineSyncUtils;
+import com.example.android.sunshine.sync.SunshineSyncAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.wearable.Wearable;
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements
          */
         getSupportLoaderManager().initLoader(ID_FORECAST_LOADER, null, this);
 
-        SunshineSyncUtils.initialize(this);
+        SunshineSyncAdapter.initializeSyncAdapter(this);
 
     }
 

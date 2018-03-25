@@ -16,10 +16,14 @@
 package com.example.android.sunshine.utilities;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.android.sunshine.R;
 import com.example.android.sunshine.data.SunshinePreferences;
+
+import java.util.Locale;
 
 /**
  * Contains useful utilities for a weather app, such as conversion between Celsius and Fahrenheit,
@@ -415,5 +419,36 @@ public final class SunshineWeatherUtils {
 
         Log.e(LOG_TAG, "Unknown Weather: " + weatherId);
         return R.drawable.art_storm;
+    }
+
+    public static String getArtUrlForWeatherCondition(Context context, int weatherId) {
+        String formatArtUrl = "https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-xxhdpi/art_%s.png";
+
+        // Based on weather code data found at:
+        // http://bugs.openweathermap.org/projects/api/wiki/Weather_Condition_Codes
+        if (weatherId >= 200 && weatherId <= 232) {
+            return String.format(Locale.US, formatArtUrl, "storm");
+        } else if (weatherId >= 300 && weatherId <= 321) {
+            return String.format(Locale.US, formatArtUrl, "light_rain");
+        } else if (weatherId >= 500 && weatherId <= 504) {
+            return String.format(Locale.US, formatArtUrl, "rain");
+        } else if (weatherId == 511) {
+            return String.format(Locale.US, formatArtUrl, "snow");
+        } else if (weatherId >= 520 && weatherId <= 531) {
+            return String.format(Locale.US, formatArtUrl, "rain");
+        } else if (weatherId >= 600 && weatherId <= 622) {
+            return String.format(Locale.US, formatArtUrl, "snow");
+        } else if (weatherId >= 701 && weatherId <= 761) {
+            return String.format(Locale.US, formatArtUrl, "fog");
+        } else if (weatherId == 761 || weatherId == 781) {
+            return String.format(Locale.US, formatArtUrl, "storm");
+        } else if (weatherId == 800) {
+            return String.format(Locale.US, formatArtUrl, "clear");
+        } else if (weatherId == 801) {
+            return String.format(Locale.US, formatArtUrl, "light_clouds");
+        } else if (weatherId >= 802 && weatherId <= 804) {
+            return String.format(Locale.US, formatArtUrl, "clouds");
+        }
+        return null;
     }
 }
